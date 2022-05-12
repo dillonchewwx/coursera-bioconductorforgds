@@ -1,0 +1,9 @@
+---
+title: "Bioconductor Quiz 2"
+author: "dillonchewwx"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+---
