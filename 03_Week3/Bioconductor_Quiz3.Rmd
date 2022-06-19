@@ -81,7 +81,7 @@ annotation_ALL_autosomes$affy_hg_u95av2 %>%
 
 ```{r q4-setup, eval=FALSE}
 ## Run this the first time to install the "minfiData" package.
-# BiocManager::install("minfiData")
+BiocManager::install("minfiData")
 library(minfiData)
 ```
 
@@ -165,15 +165,18 @@ Conclusion Compare this to the median number of counts for features without a H3
 
 ```{r q10, message=FALSE, warning=FALSE}
 library(AnnotationHub)
+# Get AH30596
 ah<-AnnotationHub()
 ah_E096<-query(ah, c("E096", "narrowPeak", "H3K4me3"))
 ah_E096_record<-ah[["AH30596"]]
 
+# Keep autosomes
 ah_E096_record_autosome<-keepStandardChromosomes(ah_E096_record, pruning.mode="coarse") %>%
   dropSeqlevels(c("chrX", "chrY", "chrM"), pruning.mode="coarse")
 ah_E096_record_ncbi<-renameSeqlevels(ah_E096_record_autosome,
                                      mapSeqlevels(seqlevels(txdb_exons), style="NCBI"))
 
+# Change to NCBI Format
 ncbi_group<-extractSeqlevelsByGroup(species="Homo sapiens", style="NCBI", group="auto")
 sample_ncbi<-keepSeqlevels(range(rowRanges(SRR1039508_autosome)), ncbi_group)
 
@@ -183,4 +186,4 @@ overlap<-subsetByOverlaps(SRR1039508, overlap)
 median(assay(overlap, "counts"))
 ```
 
-This answer is not in the options. 
+This answer appears to be much smaller than the options provided. Might have to recheck the procedure. 

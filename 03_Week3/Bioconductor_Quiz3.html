@@ -12,7 +12,7 @@
 
 <meta name="author" content="dillonchewwx" />
 
-<meta name="date" content="2022-06-15" />
+<meta name="date" content="2022-06-20" />
 
 <title>Bioconductor Quiz 3</title>
 
@@ -155,7 +155,7 @@ code span.ot { color: #007020; }
 <section class="page-header">
 <h1 class="title toc-ignore project-name">Bioconductor Quiz 3</h1>
 <h4 class="author project-author">dillonchewwx</h4>
-<h4 class="date project-date">15 June 2022</h4>
+<h4 class="date project-date">20 June 2022</h4>
 </section>
 
 
@@ -264,7 +264,7 @@ code span.ot { color: #007020; }
 <h1>Question 4</h1>
 <p><strong>Use the MsetEx dataset from the minfiData package. Part of this question is to use the help system to figure out how to address the question. What is the mean value of the Methylation channel across the features for sample “5723646052_R04C01”?</strong></p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="co">## Run this the first time to install the &quot;minfiData&quot; package.</span></span>
-<span id="cb13-2"><a href="#cb13-2"></a><span class="co"># BiocManager::install(&quot;minfiData&quot;)</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;minfiData&quot;</span>)</span>
 <span id="cb13-3"><a href="#cb13-3"></a><span class="kw">library</span>(minfiData)</span></code></pre></div>
 <p>Had some issues with installing this package and so made a guess. Answer is 7228.277.</p>
 </div>
@@ -388,24 +388,27 @@ code span.ot { color: #007020; }
 <p>Clarification: We are using the standard 2.2kb default Bioconductor promoter setting.</p>
 <p>Conclusion Compare this to the median number of counts for features without a H3K4me3 peak. Note that this short analysis has not taken transcript lengths into account and it compares different genomic regions to each other; this is highly susceptible to bias such as sequence bias.</p>
 <div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a><span class="kw">library</span>(AnnotationHub)</span>
-<span id="cb35-2"><a href="#cb35-2"></a>ah&lt;-<span class="kw">AnnotationHub</span>()</span>
-<span id="cb35-3"><a href="#cb35-3"></a>ah_E096&lt;-<span class="kw">query</span>(ah, <span class="kw">c</span>(<span class="st">&quot;E096&quot;</span>, <span class="st">&quot;narrowPeak&quot;</span>, <span class="st">&quot;H3K4me3&quot;</span>))</span>
-<span id="cb35-4"><a href="#cb35-4"></a>ah_E096_record&lt;-ah[[<span class="st">&quot;AH30596&quot;</span>]]</span>
-<span id="cb35-5"><a href="#cb35-5"></a></span>
-<span id="cb35-6"><a href="#cb35-6"></a>ah_E096_record_autosome&lt;-<span class="kw">keepStandardChromosomes</span>(ah_E096_record, <span class="dt">pruning.mode=</span><span class="st">&quot;coarse&quot;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb35-7"><a href="#cb35-7"></a><span class="st">  </span><span class="kw">dropSeqlevels</span>(<span class="kw">c</span>(<span class="st">&quot;chrX&quot;</span>, <span class="st">&quot;chrY&quot;</span>, <span class="st">&quot;chrM&quot;</span>), <span class="dt">pruning.mode=</span><span class="st">&quot;coarse&quot;</span>)</span>
-<span id="cb35-8"><a href="#cb35-8"></a>ah_E096_record_ncbi&lt;-<span class="kw">renameSeqlevels</span>(ah_E096_record_autosome,</span>
-<span id="cb35-9"><a href="#cb35-9"></a>                                     <span class="kw">mapSeqlevels</span>(<span class="kw">seqlevels</span>(txdb_exons), <span class="dt">style=</span><span class="st">&quot;NCBI&quot;</span>))</span>
-<span id="cb35-10"><a href="#cb35-10"></a></span>
-<span id="cb35-11"><a href="#cb35-11"></a>ncbi_group&lt;-<span class="kw">extractSeqlevelsByGroup</span>(<span class="dt">species=</span><span class="st">&quot;Homo sapiens&quot;</span>, <span class="dt">style=</span><span class="st">&quot;NCBI&quot;</span>, <span class="dt">group=</span><span class="st">&quot;auto&quot;</span>)</span>
-<span id="cb35-12"><a href="#cb35-12"></a>sample_ncbi&lt;-<span class="kw">keepSeqlevels</span>(<span class="kw">range</span>(<span class="kw">rowRanges</span>(SRR1039508_autosome)), ncbi_group)</span>
-<span id="cb35-13"><a href="#cb35-13"></a></span>
-<span id="cb35-14"><a href="#cb35-14"></a>overlap&lt;-<span class="kw">subsetByOverlaps</span>(<span class="kw">promoters</span>(sample_ncbi), ah_E096_record_ncbi)</span>
-<span id="cb35-15"><a href="#cb35-15"></a>overlap&lt;-<span class="kw">subsetByOverlaps</span>(SRR1039508, overlap)</span>
+<span id="cb35-2"><a href="#cb35-2"></a><span class="co"># Get AH30596</span></span>
+<span id="cb35-3"><a href="#cb35-3"></a>ah&lt;-<span class="kw">AnnotationHub</span>()</span>
+<span id="cb35-4"><a href="#cb35-4"></a>ah_E096&lt;-<span class="kw">query</span>(ah, <span class="kw">c</span>(<span class="st">&quot;E096&quot;</span>, <span class="st">&quot;narrowPeak&quot;</span>, <span class="st">&quot;H3K4me3&quot;</span>))</span>
+<span id="cb35-5"><a href="#cb35-5"></a>ah_E096_record&lt;-ah[[<span class="st">&quot;AH30596&quot;</span>]]</span>
+<span id="cb35-6"><a href="#cb35-6"></a></span>
+<span id="cb35-7"><a href="#cb35-7"></a><span class="co"># Keep autosomes</span></span>
+<span id="cb35-8"><a href="#cb35-8"></a>ah_E096_record_autosome&lt;-<span class="kw">keepStandardChromosomes</span>(ah_E096_record, <span class="dt">pruning.mode=</span><span class="st">&quot;coarse&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb35-9"><a href="#cb35-9"></a><span class="st">  </span><span class="kw">dropSeqlevels</span>(<span class="kw">c</span>(<span class="st">&quot;chrX&quot;</span>, <span class="st">&quot;chrY&quot;</span>, <span class="st">&quot;chrM&quot;</span>), <span class="dt">pruning.mode=</span><span class="st">&quot;coarse&quot;</span>)</span>
+<span id="cb35-10"><a href="#cb35-10"></a>ah_E096_record_ncbi&lt;-<span class="kw">renameSeqlevels</span>(ah_E096_record_autosome,</span>
+<span id="cb35-11"><a href="#cb35-11"></a>                                     <span class="kw">mapSeqlevels</span>(<span class="kw">seqlevels</span>(txdb_exons), <span class="dt">style=</span><span class="st">&quot;NCBI&quot;</span>))</span>
+<span id="cb35-12"><a href="#cb35-12"></a></span>
+<span id="cb35-13"><a href="#cb35-13"></a><span class="co"># Change to NCBI Format</span></span>
+<span id="cb35-14"><a href="#cb35-14"></a>ncbi_group&lt;-<span class="kw">extractSeqlevelsByGroup</span>(<span class="dt">species=</span><span class="st">&quot;Homo sapiens&quot;</span>, <span class="dt">style=</span><span class="st">&quot;NCBI&quot;</span>, <span class="dt">group=</span><span class="st">&quot;auto&quot;</span>)</span>
+<span id="cb35-15"><a href="#cb35-15"></a>sample_ncbi&lt;-<span class="kw">keepSeqlevels</span>(<span class="kw">range</span>(<span class="kw">rowRanges</span>(SRR1039508_autosome)), ncbi_group)</span>
 <span id="cb35-16"><a href="#cb35-16"></a></span>
-<span id="cb35-17"><a href="#cb35-17"></a><span class="kw">median</span>(<span class="kw">assay</span>(overlap, <span class="st">&quot;counts&quot;</span>))</span></code></pre></div>
+<span id="cb35-17"><a href="#cb35-17"></a>overlap&lt;-<span class="kw">subsetByOverlaps</span>(<span class="kw">promoters</span>(sample_ncbi), ah_E096_record_ncbi)</span>
+<span id="cb35-18"><a href="#cb35-18"></a>overlap&lt;-<span class="kw">subsetByOverlaps</span>(SRR1039508, overlap)</span>
+<span id="cb35-19"><a href="#cb35-19"></a></span>
+<span id="cb35-20"><a href="#cb35-20"></a><span class="kw">median</span>(<span class="kw">assay</span>(overlap, <span class="st">&quot;counts&quot;</span>))</span></code></pre></div>
 <pre><code>## [1] 205</code></pre>
-<p>This answer is not in the options.</p>
+<p>This answer appears to be much smaller than the options provided. Might have to recheck the procedure.</p>
 </div>
 </section>
 
