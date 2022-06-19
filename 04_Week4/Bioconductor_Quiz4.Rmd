@@ -89,8 +89,9 @@ library(oligo)
 library(GEOquery)
 
 # Read in Data - copied from lecture
-getGEOSuppFiles("GSE38792")
-untar("GSE38792/GSE38792_RAW.tar", exdir = "GSE38792/CEL")
+# Run these once only to download the files
+# getGEOSuppFiles("GSE38792") 
+# untar("GSE38792/GSE38792_RAW.tar", exdir = "GSE38792/CEL")
 q5_celfiles<-list.files("GSE38792/CEL", full = TRUE)
 q5_rawData <- read.celfiles(q5_celfiles)
 
